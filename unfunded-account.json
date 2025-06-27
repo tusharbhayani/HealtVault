@@ -1,0 +1,9 @@
+{
+  "address": "AXUZZ74O5JP36NCFKIKFALBNAC573VMXVP7RMKOEKI47JH7NDKXDZ3FT6A",
+  "mnemonic": "pet task ordinary lab bubble unknown upper video concert guard crack rather chapter kind next vibrant insane latin betray file napkin wagon chat able absurd",
+  "fundingUrls": [
+    "https://testnet.algoexplorer.io/dispenser",
+    "https://bank.testnet.algorand.network/"
+  ],
+  "instructions": "Fund this account with at least 1 ALGO and run the script again"
+}
