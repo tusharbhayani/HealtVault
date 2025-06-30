@@ -646,7 +646,7 @@ Emergency access: https://healthguardian.app/emergency/${qrCodeData}
     return content;
   }
 
-  // Enhanced save file function with proper Downloads folder targeting
+  // ENHANCED: Save file function with proper Downloads folder targeting
   static async saveFile(
     content: string,
     filename: string,
@@ -654,7 +654,12 @@ Emergency access: https://healthguardian.app/emergency/${qrCodeData}
   ): Promise<string> {
     try {
       if (Platform.OS === 'web') {
-        // Enhanced web download with proper filename and Downloads folder targeting
+        // ENHANCED: Web download with proper Downloads folder targeting
+        console.log('💾 === WEB DOWNLOAD TO DOWNLOADS FOLDER ===');
+        console.log('📁 Target: Downloads folder');
+        console.log('📄 Filename:', filename);
+        console.log('📊 Content type:', mimeType);
+
         const blob = new Blob([content], { type: mimeType });
         const url = URL.createObjectURL(blob);
 
@@ -664,17 +669,33 @@ Emergency access: https://healthguardian.app/emergency/${qrCodeData}
         link.download = filename; // This ensures the file goes to Downloads folder
         link.style.display = 'none'; // Hide the link
 
+        // CRITICAL: Set additional attributes to ensure Downloads folder targeting
+        link.setAttribute('download', filename);
+        link.setAttribute('target', '_blank');
+
         // Add to DOM, click, and remove
         document.body.appendChild(link);
+
+        // Force the download
         link.click();
+
+        // Clean up
         document.body.removeChild(link);
 
-        // Clean up the blob URL
-        setTimeout(() => URL.revokeObjectURL(url), 100);
+        // Clean up the blob URL after a short delay
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+          console.log('✅ Blob URL cleaned up');
+        }, 100);
+
+        console.log('✅ === DOWNLOAD INITIATED TO DOWNLOADS FOLDER ===');
+        console.log('📁 File should appear in your Downloads folder');
+        console.log('📄 Filename:', filename);
 
         return `Downloaded: ${filename} to Downloads folder`;
       } else {
-        // Mobile save to Documents directory
+        // Mobile save to Documents directory with sharing
+        console.log('📱 === MOBILE SAVE AND SHARE ===');
         const documentsDirectory = FileSystem.documentDirectory;
         const fileUri = `${documentsDirectory}${filename}`;
 
@@ -682,10 +703,23 @@ Emergency access: https://healthguardian.app/emergency/${qrCodeData}
           encoding: FileSystem.EncodingType.UTF8,
         });
 
+        console.log('✅ File saved to mobile documents');
+        console.log('📄 File URI:', fileUri);
+
+        // Automatically share the file on mobile
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(fileUri, {
+            dialogTitle: 'Save HealthGuardian Document',
+            mimeType: mimeType,
+          });
+          console.log('📤 File shared via mobile sharing');
+        }
+
+        console.log('🚀 ~ qr-utils.ts:718 ~ QRCodeManager ~ fileUri:', fileUri);
         return fileUri;
       }
     } catch (error) {
-      console.error('Failed to save file:', error);
+      console.error('❌ Failed to save file:', error);
       throw new Error(`Failed to save ${filename}: ${error.message}`);
     }
   }
@@ -745,7 +779,7 @@ Emergency access: https://healthguardian.app/emergency/${qrCodeData}
     }
   }
 
-  // Download health summary with enhanced Downloads folder targeting
+  // ENHANCED: Download health summary with proper Downloads folder targeting
   static async downloadHealthSummary(
     options: HealthSummaryOptions
   ): Promise<string> {
@@ -755,32 +789,47 @@ Emergency access: https://healthguardian.app/emergency/${qrCodeData}
       healthRecord.full_name?.replace(/[^a-zA-Z0-9]/g, '_') || 'Patient';
     const filename = `HealthGuardian_Summary_${sanitizedName}_${timestamp}`;
 
+    console.log('📋 === DOWNLOADING HEALTH SUMMARY ===');
+    console.log('📄 Format:', format);
+    console.log('👤 Patient:', healthRecord.full_name);
+    console.log('📁 Target filename:', filename);
+
     try {
       switch (format) {
         case 'pdf': {
+          console.log('📄 Generating PDF content...');
           const content = this.generateHealthSummaryPDF(options);
-          return await this.saveFile(
+          const result = await this.saveFile(
             content,
             `${filename}.pdf`,
             'application/pdf'
           );
+          console.log('✅ PDF health summary download completed');
+          return result;
         }
 
         case 'txt': {
+          console.log('📝 Generating text content...');
           const content = this.generateHealthSummaryText(options);
-          return await this.saveFile(content, `${filename}.txt`, 'text/plain');
+          const result = await this.saveFile(
+            content,
+            `${filename}.txt`,
+            'text/plain'
+          );
+          console.log('✅ Text health summary download completed');
+          return result;
         }
 
         default:
           throw new Error(`Unsupported format: ${format}`);
       }
     } catch (error) {
-      console.error('Download failed:', error);
+      console.error('❌ Health summary download failed:', error);
       throw error;
     }
   }
 
-  // Main download function with enhanced Downloads folder targeting
+  // ENHANCED: Main download function with proper Downloads folder targeting
   static async downloadQRCode(
     options: QRDownloadOptions,
     qrRef?: any
@@ -791,49 +840,71 @@ Emergency access: https://healthguardian.app/emergency/${qrCodeData}
       patientName?.replace(/[^a-zA-Z0-9]/g, '_') || 'Patient';
     const filename = `HealthGuardian_QR_${sanitizedName}_${timestamp}`;
 
+    console.log('📱 === DOWNLOADING QR CODE ===');
+    console.log('📄 Format:', format);
+    console.log('👤 Patient:', patientName);
+    console.log('📁 Target filename:', filename);
+
     try {
       switch (format) {
         case 'png': {
           if (!qrRef)
             throw new Error('QR code reference required for PNG export');
+
+          console.log('📸 Capturing QR code image...');
           const imageUri = await this.captureQRCode(qrRef);
 
           if (Platform.OS !== 'web') {
             await this.saveToGallery(imageUri);
+            console.log('✅ QR code saved to mobile gallery');
             return 'QR code saved to gallery';
           } else {
+            console.log('✅ QR code captured for web');
             return 'QR code captured successfully';
           }
         }
 
         case 'pdf': {
+          console.log('📄 Generating PDF content...');
           const content = this.generatePDFContent(options);
-          return await this.saveFile(
+          const result = await this.saveFile(
             content,
             `${filename}.pdf`,
             'application/pdf'
           );
+          console.log('✅ PDF QR code download completed');
+          return result;
         }
 
         case 'svg': {
+          console.log('🎨 Generating SVG content...');
           const content = this.generateSVGContent(options);
-          return await this.saveFile(
+          const result = await this.saveFile(
             content,
             `${filename}.svg`,
             'image/svg+xml'
           );
+          console.log('✅ SVG QR code download completed');
+          return result;
         }
 
         case 'txt': {
+          console.log('📝 Generating text content...');
           const content = this.generateTextContent(options);
-          return await this.saveFile(content, `${filename}.txt`, 'text/plain');
+          const result = await this.saveFile(
+            content,
+            `${filename}.txt`,
+            'text/plain'
+          );
+          console.log('✅ Text QR code download completed');
+          return result;
         }
 
         default:
           throw new Error(`Unsupported format: ${format}`);
       }
     } catch (error) {
-      console.error('Download failed:', error);
+      console.error('❌ QR code download failed:', error);
       throw error;
     }
   }
