@@ -1,0 +1,58 @@
+{
+  "cli": {
+    "version": ">= 3.0.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://your-project-ref.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "your-anon-key-here",
+        "EXPO_PUBLIC_ELEVENLABS_API_KEY": "your-elevenlabs-key-here",
+        "EXPO_PUBLIC_ELEVENLABS_VOICE_ID": "EXAVITQu4vr4xnSDxMaL",
+        "EXPO_PUBLIC_ALGORAND_NODE_URL": "sdvjsdnvsjdv",
+        "EXPO_PUBLIC_ALGORAND_API_KEY": "sdvsnvkjsdv8sdwefw-bmbkjk",
+        "EXPO_PUBLIC_ALGORAND_SERVER": "jhgjyhbjbjhbjh",
+        "EXPO_PUBLIC_ALGORAND_PORT": "797",
+        "EXPO_PUBLIC_ALGORAND_APP_ID": "0",
+        "EXPO_PUBLIC_ALGORAND_NETWORK": "testnet",
+        "EXPO_PUBLIC_REVENUECAT_PUBLIC_KEY": "jjhbjhbjhyjhbjklj"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://your-project-ref.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "your-anon-key-here",
+        "EXPO_PUBLIC_ELEVENLABS_API_KEY": "your-elevenlabs-key-here",
+        "EXPO_PUBLIC_ELEVENLABS_VOICE_ID": "EXAVITQu4vr4xnSDxMaL",
+        "EXPO_PUBLIC_ALGORAND_NODE_URL": "sdvjsdnvsjdv",
+        "EXPO_PUBLIC_ALGORAND_API_KEY": "sdvsnvkjsdv8sdwefw-bmbkjk",
+        "EXPO_PUBLIC_ALGORAND_SERVER": "jhgjyhbjbjhbjh",
+        "EXPO_PUBLIC_ALGORAND_PORT": "797",
+        "EXPO_PUBLIC_ALGORAND_APP_ID": "0",
+        "EXPO_PUBLIC_ALGORAND_NETWORK": "testnet",
+        "EXPO_PUBLIC_REVENUECAT_PUBLIC_KEY": "jjhbjhbjhyjhbjklj"
+      }
+    },
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://your-project-ref.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "your-anon-key-here",
+        "EXPO_PUBLIC_ELEVENLABS_API_KEY": "your-elevenlabs-key-here",
+        "EXPO_PUBLIC_ELEVENLABS_VOICE_ID": "EXAVITQu4vr4xnSDxMaL",
+        "EXPO_PUBLIC_ALGORAND_NODE_URL": "sdvjsdnvsjdv",
+        "EXPO_PUBLIC_ALGORAND_API_KEY": "sdvsnvkjsdv8sdwefw-bmbkjk",
+        "EXPO_PUBLIC_ALGORAND_SERVER": "jhgjyhbjbjhbjh",
+        "EXPO_PUBLIC_ALGORAND_PORT": "797",
+        "EXPO_PUBLIC_ALGORAND_APP_ID": "0",
+        "EXPO_PUBLIC_ALGORAND_NETWORK": "testnet",
+        "EXPO_PUBLIC_REVENUECAT_PUBLIC_KEY": "jjhbjhbjhyjhbjklj"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

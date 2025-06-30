@@ -6,6 +6,7 @@ interface AuthState {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
+  isAuthInitialized: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (
     email: string,
@@ -16,12 +17,18 @@ interface AuthState {
   signOut: () => Promise<void>;
   loadProfile: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<void>;
+  setAuthInitialized: (initialized: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   profile: null,
   loading: false,
+  isAuthInitialized: false,
+
+  setAuthInitialized: (initialized: boolean) => {
+    set({ isAuthInitialized: initialized });
+  },
 
   signIn: async (email: string, password: string) => {
     set({ loading: true });

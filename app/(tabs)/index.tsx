@@ -17,13 +17,10 @@ export default function DashboardScreen() {
     useHealthStore()
 
   useEffect(() => {
-    if (!user) {
-      router.replace("/(auth)/login")
-      return
-    }
-
+    // Load health record when component mounts
+    // Auth state is already handled by root layout
     loadHealthRecord()
-  }, [user])
+  }, [])
 
   useEffect(() => {
     if (healthRecord && !qrCodeData) {
@@ -79,10 +76,6 @@ export default function DashboardScreen() {
     } else {
       Alert.alert("No Blockchain Data", "This health record hasn't been stored on the blockchain yet.")
     }
-  }
-
-  if (!user) {
-    return <LoadingSpinner message="Loading..." />
   }
 
   if (loading) {

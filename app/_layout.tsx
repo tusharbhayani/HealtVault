@@ -5,42 +5,77 @@ import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/store/useAuthStore';
 import { setupCryptoPolyfill } from '@/lib/crypto-polyfill';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 export default function RootLayout() {
   useFrameworkReady();
 
-  useEffect(() => {
-    // Initialize crypto polyfills first
-    setupCryptoPolyfill();
+  const { user, isAuthInitialized, setAuthInitialized } = useAuthStore();
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.id);
+  useEffect(() => {
+    const init = async () => {
+      setupCryptoPolyfill();
+
+      try {
+        // ✅ Fetch initial session
+        const { data: { session }, error } = await supabase.auth.getSession();
+
+        if (error) {
+          console.warn("Session fetch error:", error.message);
+        }
 
         if (session?.user) {
-          // User is signed in
           useAuthStore.setState({ user: session.user });
-
-          // Load or create profile
           const { loadProfile } = useAuthStore.getState();
           await loadProfile();
         } else {
-          // User is signed out
+          // ✅ Important: explicitly reset state
           useAuthStore.setState({ user: null, profile: null });
         }
-      }
-    );
 
-    return () => subscription.unsubscribe();
-  }, []);
+        // ✅ Subscribe to future auth state changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+          async (event, session) => {
+            if (session?.user) {
+              useAuthStore.setState({ user: session.user });
+              const { loadProfile } = useAuthStore.getState();
+              await loadProfile();
+            } else {
+              useAuthStore.setState({ user: null, profile: null });
+            }
+
+            setAuthInitialized(true); // 👈 Also move this inside here to ensure it waits
+          }
+        );
+
+        setAuthInitialized(true); // ✅ Now safe to mark as initialized
+
+        return () => subscription.unsubscribe();
+      } catch (err) {
+        console.error("Auth init error:", err);
+        useAuthStore.setState({ user: null, profile: null });
+        setAuthInitialized(true);
+      }
+    };
+
+    init();
+  }, [setAuthInitialized]);
+
+  if (!isAuthInitialized) {
+    return <LoadingSpinner message="Loading..." />;
+  }
 
   return (
     <>
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="emergency/[id]" />
+        {user ? (
+          <>
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="emergency/[id]" />
+          </>
+        ) : (
+          <Stack.Screen name="(auth)" />
+        )}
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
